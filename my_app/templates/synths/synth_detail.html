@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block content %}
+<h2>{{ object.name }}</h2>
+<p><strong>Manufacturer:</strong> {{ object.manufacturer }}</p>
+<p><strong>Year:</strong> {{ object.year }}</p>
+<p><strong>Type:</strong> {{ object.synth_type }}</p>
+<p><strong>Description:</strong> {{ object.description }}</p>
+
+<hr>
+
+<h3>Service & Modifications Log</h3>
+{% if object.logs.all %}
+<ul>
+    {% for log in object.logs.all %}
+    {% if log.user == user %}
+    <li>
+        <strong>{{ log.date }}</strong> - <em>{{ log.log_type }}</em>: {{ log.description }}
+        <div style="margin-top: 5px;">
+            <a href="{% url 'log_edit' log.pk %}" class="btn">Edit</a>
+            <a href="{% url 'log_delete' log.pk %}" class="btn danger">Delete</a>
+        </div>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% else %}
+<p>No logs for this synth yet.</p>
+{% endif %}
+
+<hr>
+
+<h3>Add a New Log Entry</h3>
+<form method="POST"">
+{% csrf_token %}
+{{ log_form.as_p }}
+<button type="submit" class="btn submit">Add Log Entry</button>
+</form>
+
+<hr>
+
+<p>
+  <a href="{% url 'synth_update' object.id %}" class="btn">Edit</a>
+  <a href="{% url 'synth_delete' object.id %}" class="btn danger">Delete</a>
+  <a href="{% url 'synth_list' %}" class="btn secondary">Back to List</a>
+</p>
+
+{% endblock %}

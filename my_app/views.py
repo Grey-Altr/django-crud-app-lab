@@ -1,23 +1,91 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-# Create your views here.
+from .models import Synth, SynthLog
+from .forms import SynthLogForm
+
+
 def home(request):
     return render(request, 'home.html')
 
 def about(request):
     return render(request, 'about.html')
 
-def synth_index(request):
-    return render(request, 'synths/synth-index.html')
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('synth_list')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})
 
-def synth_detail(request, synth_id):
-    return render(request, 'synths/detail.html')
+class SynthListView(LoginRequiredMixin, ListView):
+    model = Synth
+    template_name = 'synths/synth_list.html'
+    
+    def get_queryset(self):
+        return Synth.objects.filter(user=self.request.user)
 
-def synth_create(request):
-    return render(request, 'synths/create.html')
+class SynthCreateView(LoginRequiredMixin, CreateView):
+    model = Synth
+    fields = '__all__'
+    template_name = 'synths/synth_form.html'
+    success_url = reverse_lazy('synth_list')
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
-def synth_update(request, synth_id):
-    return render(request, 'synths/detail.html')
+class SynthUpdateView(LoginRequiredMixin, UpdateView):
+    model = Synth
+    fields = '__all__'
+    template_name = 'synths/synth_form.html'
+    success_url = reverse_lazy('synth_list')
 
-def synth_delete(request, synth_id):
-    return render(request, 'synths/delete.html')
+class SynthDeleteView(LoginRequiredMixin, DeleteView):
+    model = Synth
+    template_name = 'synths/synth_confirm_delete.html'
+    success_url = reverse_lazy('synth_list')
+    
+@login_required
+def synth_detail(request, pk):
+    synth = get_object_or_404(Synth, pk=pk)
+    
+    if request.method == 'POST':
+        form = SynthLogForm(request.POST)
+        if form.is_valid():
+            new_log = form.save(commit=False)
+            new_log.synth = synth
+            new_log.user = request.user
+            new_log.save()
+            return redirect ('synth_detail', pk=synth.pk)
+    else:
+        form = SynthLogForm()
+        
+    return render(request, 'synths/synth_detail.html', {
+        'object': synth,
+        'log_form': form
+    })
+    
+class SynthLogUpdateView(LoginRequiredMixin, UpdateView):
+    model = SynthLog
+    form_class = SynthLogForm
+    template_name = 'synths/synthlog_form.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('synth_detail', kwargs={'pk': self.object.synth.pk})
+    
+class SynthLogDeleteView(LoginRequiredMixin, DeleteView):
+    model = SynthLog
+    template_name = 'synths/synthlog_confirm_delete.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('synth_detail', kwargs={'pk': self.object.synth.pk})

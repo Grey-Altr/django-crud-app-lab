@@ -1,0 +1,14 @@
+{% extends 'base.html' %} {% block content %}
+<h2>All Synths</h2>
+<ul>
+  {% for synth in object_list %}
+  <li>
+    <a href="{% url 'synth_detail' synth.id %}">
+      {{ synth.name }} by {{ synth.manufacturer }} ({{ synth.year }})
+    </a>
+  </li>
+  {% empty %}
+  <li>No synths added yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Delete Log Entry</h2>
+<p>Are you sure you want to delete this <strong>{{ object.log_type }}</strong> log from <strong>{{ object.synth.name }}</strong> dated {{object.date }}?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn danger">Delete</button>
+    <a href="{% 'synth_detail' object.synth.pk %}" class="btn secondary">Cancel</a>
+</form>
+{% endblock %}

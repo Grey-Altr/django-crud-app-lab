@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Welcome to Synth Collector</h2>
+<p>
+  This is your person digital vault for collecting, cataloging, and admiring
+  your synths.
+</p>
+<p>Add vintage classics, modern monsters, or dream synths to your collection</p>
+
+<a href="{% url 'synth_list' %}" class="btn submit">🎛 View Your Collection</a>
+{% endblock %}

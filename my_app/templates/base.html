@@ -8,26 +8,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/png" href="" />
     <title>Synth Collector</title>
-    <link rel="stylesheet" href="{% static 'css/base.css'}">
-    {% block head %} 
-    {% endblock %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    {% block head %} {% endblock %}
   </head>
   <body>
     <header>
-      <div class="header-logo-container">
-        <a href="/">
-          <img src="" alt="" />
-        </a>
-      </div>
+      <h1>
+        <a href="{% url 'synth_list' %}"> 🎛️ Synth Collector </a>
+      </h1>
       <nav>
         <ul>
-          <li><a href="/about">About</a></li>
+          <li>
+            <a href="{% url 'home' %}">Home</a>
+          </li>
+          <li>
+            <a href="{% url 'about' %}">About</a>
+          </li>
+          <li>
+            <a href="{% url 'synth_create' %}">Add a Synth</a>
+          </li>
+
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'signup' %}">Sign Up</a></li>
+          {% endif %}
         </ul>
       </nav>
     </header>
-    <main>
-     {% block content %} 
-     {% endblock %}
-     </main>
+    <main>{% block content %} {% endblock %}</main>
   </body>
 </html>

@@ -1,0 +1,8 @@
+{% extends 'base.html' %} {% block content %}
+<h2>{% if object %}Edit Synth{% else %}Add New Synth{% endif %}</h2>
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="btn submit">Save</button>
+</form>
+<a href="{% url 'synth_list' %}" class="btn secondary">Cancel</a>
+{% endblock %}

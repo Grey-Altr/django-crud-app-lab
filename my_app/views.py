@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -10,13 +11,14 @@ from .models import Synth, SynthLog
 from .forms import SynthLogForm
 
 
-def home(request):
-    return render(request, 'home.html')
+class Home(LoginView):
+    template_name = 'home.html'
 
 def about(request):
     return render(request, 'about.html')
 
 def signup(request):
+    error_message = ''
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -24,8 +26,10 @@ def signup(request):
             login(request, user)
             return redirect('synth_list')
     else:
+        error_message = 'Invalid sign up - try again'
         form = UserCreationForm()
-    return render(request, 'registration/signup.html', {'form': form})
+        context = {'form': form, 'error_message': error_message}
+    return render(request, 'signup.html', context)
 
 class SynthListView(LoginRequiredMixin, ListView):
     model = Synth

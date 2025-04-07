@@ -7,4 +7,14 @@
 <p>Add vintage classics, modern monsters, or dream synths to your collection</p>
 
 <a href="{% url 'synth_list' %}" class="btn submit">🎛 View Your Collection</a>
-{% endblock %}
+
+{% if not user.us_authenticated %}
+<section>
+  <form action="{% url 'home' %}" method="POST" class="login">
+    <h1>Login</h1>
+    {% csrf_token %} {{ form.as_p }}
+    <input type="hidden" name="next" value="{{ next }}" />
+    <button type="submit" class="btn submit">Login</button>
+  </form>
+</section>
+{% endif %} {% endblock %}

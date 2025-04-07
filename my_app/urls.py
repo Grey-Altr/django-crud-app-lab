@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     path(
         '',
-        views.home,
+        views.Home.as_view(),
         name='home',
         ),
     path('about/',
@@ -42,11 +42,13 @@ urlpatterns = [
         name='synth_delete'
         ),
     path(
-        'logs/<int:pk>/edit/', views.SynthLogUpdateView.as_view(),
+        'logs/<int:pk>/edit/',
+        views.SynthLogUpdateView.as_view(),
         name='log_edit',
     ),
     path(
-        'logs/<int:pk>/delete/', views.SynthLogDeleteView.as_view(),
+        'logs/<int:pk>/delete/',
+        views.SynthLogDeleteView.as_view(),
         name='log_delete',
     ),
 ]

@@ -12,7 +12,7 @@ urlpatterns = [
         name='about',
         ),
     path(
-        'signup/',
+        'accounts/signup/',
         views.signup,
         name='signup',
         ),

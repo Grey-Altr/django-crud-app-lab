@@ -26,7 +26,7 @@ urlpatterns = [
         '',
         include('my_app.urls')
         ),
-    path('signup/',
+    path('accounts/',
         include('django.contrib.auth.urls')
         ),
 ]
